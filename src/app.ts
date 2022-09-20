@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 //Execute
 dotenv.config();
 import { CORS_URL, URI } from './config';
-import './db';
+// import './db';
 import routesV1 from './routes/v1';
 
 //Catch errors

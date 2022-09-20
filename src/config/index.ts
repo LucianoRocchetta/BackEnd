@@ -1,4 +1,4 @@
-export const PORT = 4040;
+export const PORT = process.env.PORT || 8080;
 export const CORS_URL = process.env.CORS_URL;
 export const DB = {
   PASSWORD: process.env.DB_PASSWORD,

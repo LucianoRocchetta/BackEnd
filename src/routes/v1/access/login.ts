@@ -6,5 +6,6 @@ import Repo from "./repo";
 const router = Router();
 
 router.post("/login", validator(schema.loginCredentials), Repo.login);
+router.post("/test", validator(schema.loginCredentials), Repo.test);
 
 export default router;

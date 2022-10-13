@@ -1,13 +1,15 @@
-import { URI } from "src/config";
+import { URI } from "../config";
 import mongoose from "mongoose";
 
-const connectionParams={
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useUnifiedTopology: true 
+const connectionParams = {
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useUnifiedTopology: true,
+};
+
+async function connectDB() {
+  const db = await mongoose.connect(URI);
+  console.log("database is connected to", db.connection.db.databaseName);
 }
 
-mongoose.connect(URI, (err) => {
-    if (err) throw err
-    return connectionParams;
-})
+connectDB();

@@ -1,7 +1,7 @@
 import { NextFunction, Response, Request } from "express";
-import HttpStatusCode from "../../../shared/httpStatusCode";
-import { ErrorResponse, SuccessResponse } from "../../../shared/apiService";
-import UserModel from "../../../db/models/User";
+import HttpStatusCode from "../../../../shared/httpStatusCode";
+import { ErrorResponse, SuccessResponse } from "../../../../shared/apiService";
+import UserModel from "../../../../db/models/User";
 
 export default class Repo {
   public static async login(req: Request, res: Response, next: NextFunction) {

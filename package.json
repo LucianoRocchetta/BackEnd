@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@typegoose/auto-increment": "^1.8.0",
     "@typegoose/typegoose": "^9.12.1",
     "cors": "^2.8.5",
     "crypto-js": "^4.1.1",

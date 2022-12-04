@@ -1,5 +1,5 @@
 import express, { Request, Router } from "express";
-import validator from "../../../shared/validator";
+import validator from "../../../../shared/validator";
 import schema from "./schema";
 import Repo from "./repo";
 

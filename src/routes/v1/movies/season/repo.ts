@@ -3,6 +3,9 @@ import HttpStatusCode from "../../../../shared/httpStatusCode";
 import { ErrorResponse, SuccessResponse } from "../../../../shared/apiService";
 import SeasonModel from "../../../../db/models/Season";
 import { ISeason } from "../../../../shared/types";
+import MovieInfoModel from "../../../../db/models/MovieInfo";
+import SeasonInfoModel from "../../../../db/models/SeasonInfo";
+import ChapterModel from "../../../../db/models/Chapter";
 
 export default class Repo {
   //SEASON POST
@@ -12,13 +15,27 @@ export default class Repo {
     next: NextFunction
   ) {
     try {
-      const Season: ISeason = req.body;
-      await SeasonModel.create(Season);
-      new SuccessResponse("Season created successfully", Season).send(res);
+      const { id } = req.params;
+      const content: ISeason = req.body;
+      const movie = await MovieInfoModel.findById(id);
+      if (movie) {
+        const newSeasonInfo = await SeasonModel.create({
+          ...content,
+          movie_id: id,
+        });
+        new SuccessResponse("Season created successfully", newSeasonInfo).send(
+          res
+        );
+      } else {
+        new ErrorResponse("Movie id not found", HttpStatusCode.NOT_FOUND).send(
+          res
+        );
+      }
     } catch (e: any) {
       new ErrorResponse(e.message, HttpStatusCode.NOT_FOUND).send(res);
     }
   }
+
   //SEASON GET
   public static async getSeasons(
     req: Request,
@@ -41,12 +58,13 @@ export default class Repo {
   ) {
     try {
       const { id } = req.params;
-      const season = await SeasonModel.findById(id);
-      new SuccessResponse("Season obtained successfully", season).send(res);
+      const seasonById = await SeasonModel.findById(id);
+      new SuccessResponse("Season obtained successfully", seasonById).send(res);
     } catch (e: any) {
       new ErrorResponse(e.message, HttpStatusCode.NOT_FOUND).send(res);
     }
   }
+
   //SEASON PUT
   public static async updateSeasonById(
     req: Request,
@@ -59,6 +77,64 @@ export default class Repo {
       await SeasonModel.findByIdAndUpdate(id, update);
       const seasonUpdated = await SeasonModel.findById(id);
       new SuccessResponse("Season updated successfully", seasonUpdated).send(
+        res
+      );
+    } catch (e: any) {
+      new ErrorResponse(e.message, HttpStatusCode.NOT_FOUND).send(res);
+    }
+  }
+  public static async updateSeasonToOtherChanges(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { id } = req.params;
+      const seasonsInfo = await SeasonInfoModel.find({ season_id: id });
+      const IdSeasonInfo = seasonsInfo[0]._id;
+      if (IdSeasonInfo) {
+        await SeasonModel.findByIdAndUpdate(id, {
+          season_info: IdSeasonInfo,
+        });
+        const chapters = await ChapterModel.find({
+          season_info_id: IdSeasonInfo,
+        });
+        const chaptersIds = chapters.map(({ _id }) => _id);
+        if (chaptersIds) {
+          await SeasonInfoModel.findByIdAndUpdate(IdSeasonInfo, {
+            length: chaptersIds.length,
+            chapters: chaptersIds,
+          });
+        }
+        const seasonUpdated = await SeasonModel.findById(id).populate({
+          path: "season_info",
+          populate: { path: "chapters" },
+        });
+        new SuccessResponse("Season updated successfully", seasonUpdated).send(
+          res
+        );
+      } else {
+        new ErrorResponse(
+          "Error id_season not found",
+          HttpStatusCode.NOT_FOUND
+        ).send(res);
+      }
+    } catch (e: any) {
+      new ErrorResponse(e.message, HttpStatusCode.NOT_FOUND).send(res);
+    }
+  }
+
+  //SEASON DELETE
+  public static async deleteSeasonById(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { id } = req.params;
+      const seasonDeleted = await SeasonModel.findById(id);
+      await SeasonModel.findByIdAndDelete(id);
+      new SuccessResponse("Season deleted successfully", seasonDeleted).send(
         res
       );
     } catch (e: any) {

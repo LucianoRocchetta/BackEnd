@@ -3,7 +3,7 @@ import { prop, getModelForClass, plugin } from "@typegoose/typegoose";
 @plugin(AutoIncrementID, { startAt: 1 })
 export class Specification {
   @prop({ type: Number })
-  public _id: number;
+  _id: number;
   @prop({ required: true, trim: true, type: String })
   name: string;
 }

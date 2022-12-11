@@ -12,16 +12,17 @@ export default class Repo {
     next: NextFunction
   ) {
     try {
-      const Specification: ISpecification = req.body;
-      await SpecificationModel.create(Specification);
+      const content: ISpecification = req.body;
+      const specification = await SpecificationModel.create(content);
       new SuccessResponse(
         "Specification created successfully",
-        Specification
+        specification
       ).send(res);
     } catch (e: any) {
       new ErrorResponse(e.message, HttpStatusCode.NOT_FOUND).send(res);
     }
   }
+
   //SPECIFICATION GET
   public static async getSpecifications(
     req: Request,
@@ -29,10 +30,10 @@ export default class Repo {
     next: NextFunction
   ) {
     try {
-      const response = await SpecificationModel.find();
+      const specifications = await SpecificationModel.find();
       new SuccessResponse(
         "Specification list obtained successfully",
-        response
+        specifications
       ).send(res);
     } catch (e: any) {
       new ErrorResponse(e.message, HttpStatusCode.NOT_FOUND).send(res);
@@ -45,15 +46,16 @@ export default class Repo {
   ) {
     try {
       const { id } = req.params;
-      const specification = await SpecificationModel.findById(id);
+      const specificationById = await SpecificationModel.findById(id);
       new SuccessResponse(
         "Specification list obtained successfully",
-        specification
+        specificationById
       ).send(res);
     } catch (e: any) {
       new ErrorResponse(e.message, HttpStatusCode.NOT_FOUND).send(res);
     }
   }
+
   //SPECIFICATION PUT
   public static async updateSpecificationById(
     req: Request,
@@ -66,8 +68,28 @@ export default class Repo {
       await SpecificationModel.findByIdAndUpdate(id, update);
       const specificationUpdated = await SpecificationModel.findById(id);
       new SuccessResponse(
-        "Specification list obtained successfully",
+        "Specification updated successfully",
         specificationUpdated
+      ).send(res);
+    } catch (e: any) {
+      new ErrorResponse(e.message, HttpStatusCode.NOT_FOUND).send(res);
+    }
+  }
+
+  //SPECIFICATION DELETE
+  public static async deleteSpecificationById(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { id } = req.params;
+      const specificationDeleted = await SpecificationModel.findByIdAndDelete(
+        id
+      );
+      new SuccessResponse(
+        "Specification deleted successfully",
+        specificationDeleted
       ).send(res);
     } catch (e: any) {
       new ErrorResponse(e.message, HttpStatusCode.NOT_FOUND).send(res);

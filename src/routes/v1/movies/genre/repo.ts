@@ -12,10 +12,9 @@ export default class Repo {
     next: NextFunction
   ) {
     try {
-      const Genre: IGenre = req.body;
-      const response = await GenreModel.create(Genre);
-
-      new SuccessResponse("Genre created successfully", Genre).send(res);
+      const content: IGenre = req.body;
+      const genre = await GenreModel.create(content);
+      new SuccessResponse("Genre created successfully", genre).send(res);
     } catch (e: any) {
       new ErrorResponse(e.message, HttpStatusCode.NOT_FOUND).send(res);
     }
@@ -28,8 +27,8 @@ export default class Repo {
     next: NextFunction
   ) {
     try {
-      const response = await GenreModel.find();
-      new SuccessResponse("Genres list obtained successfully", response).send(
+      const genresList = await GenreModel.find();
+      new SuccessResponse("Genres list obtained successfully", genresList).send(
         res
       );
     } catch (e: any) {
@@ -43,8 +42,8 @@ export default class Repo {
   ) {
     try {
       const { id } = req.params;
-      const response = await GenreModel.findById(id);
-      new SuccessResponse("Genre obtained successfully", response).send(res);
+      const genreById = await GenreModel.findById(id);
+      new SuccessResponse("Genre obtained successfully", genreById).send(res);
     } catch (e: any) {
       new ErrorResponse(e.message, HttpStatusCode.NOT_FOUND).send(res);
     }
@@ -62,6 +61,21 @@ export default class Repo {
       await GenreModel.findByIdAndUpdate(id, update);
       const genreUpdated = await GenreModel.findById(id);
       new SuccessResponse("Genre updated successfully", genreUpdated).send(res);
+    } catch (e: any) {
+      new ErrorResponse(e.message, HttpStatusCode.NOT_FOUND).send(res);
+    }
+  }
+
+  //GENRE DELETE
+  public static async deleteGenre(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { id } = req.params;
+      const genreDeleted = await GenreModel.findByIdAndDelete(id);
+      new SuccessResponse("Genre deleted successfully", genreDeleted).send(res);
     } catch (e: any) {
       new ErrorResponse(e.message, HttpStatusCode.NOT_FOUND).send(res);
     }

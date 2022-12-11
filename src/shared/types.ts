@@ -1,17 +1,30 @@
 export interface IGenre {
   name: string;
 }
+export interface IChapter {
+  season_info_id: number;
+  name?: string;
+  length: number;
+  cover_url?: string;
+  video_url?: string;
+}
+export interface ISeasonInfo {
+  season_id: number;
+  chapters_length: number;
+  chapters: number[];
+}
 export interface ISeason {
-  season_name: string;
-  nro_season: number;
-  nro_chapters: number;
+  movie_id: number;
+  season_name?: string;
+  season_number: number;
+  season_info: number;
 }
 export interface ISpecification {
   name: string;
 }
 export interface IMovieInfo {
   name: string;
-  genres: [];
+  genres: number[];
   duration?: Number;
   description: string;
   type: "movie" | "series";

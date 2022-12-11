@@ -5,7 +5,7 @@ import { Season } from "./Season";
 import { Specification } from "./Specification";
 
 @plugin(AutoIncrementID, { startAt: 1 })
-class MovieInfo {
+export class MovieInfo {
   @prop({ type: Number })
   _id: number;
   @prop({ required: true, trim: true, type: String })
@@ -20,7 +20,7 @@ class MovieInfo {
   type: "movie" | "series";
   @prop({ required: true, type: String })
   image_cover: string;
-  @prop({ ref: () => Season, type: Array })
+  @prop({ type: Array, ref: () => Season })
   seasons?: Ref<Season>[];
   @prop({ type: String })
   movie_url?: string;

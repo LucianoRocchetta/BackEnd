@@ -9,4 +9,6 @@ router.get("/genres/:id", Repo.getGenreById);
 
 router.put("/genres/:id", Repo.updateGenre);
 
+router.delete("/genres/:id", Repo.deleteGenre);
+
 export default router;

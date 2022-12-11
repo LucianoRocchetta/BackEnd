@@ -12,17 +12,21 @@ export default class Repo {
     next: NextFunction
   ) {
     try {
-      const movie: IMovieInfo = req.body;
-      await MovieInfoModel.create(movie);
-      const movieCreated = MovieInfoModel.findOne(movie).populate(
-        "genres seasons score specifications",
-        "name season_name season_number season_chapters score_points"
-      );
-      new SuccessResponse("Movie created successfully", movieCreated).send(res);
+      const content: IMovieInfo = req.body;
+      const populate = {
+        path: "seasons",
+        populate: { path: "season_info", populate: { path: "chapters" } },
+      };
+      const movie = await MovieInfoModel.create(content);
+      const MovieCreated = await MovieInfoModel.findById(movie._id)
+        .populate(populate)
+        .populate("genres specifications");
+      new SuccessResponse("Movie created successfully", MovieCreated).send(res);
     } catch (e: any) {
       new ErrorResponse(e.message, HttpStatusCode.NOT_FOUND).send(res);
     }
   }
+
   //MOVIES GET
   public static async getMovies(
     req: Request,
@@ -30,17 +34,42 @@ export default class Repo {
     next: NextFunction
   ) {
     try {
-      const response = await MovieInfoModel.find().populate(
-        "genres seasons score specifications",
-        "name season_name season_number season_chapters score_points"
-      );
-      new SuccessResponse("Movies list obtained successfully", response).send(
+      const populate = {
+        path: "seasons",
+        populate: { path: "season_info", populate: { path: "chapters" } },
+      };
+      const movieInfo = await MovieInfoModel.find()
+        .populate(populate)
+        .populate("genres specifications");
+      new SuccessResponse("Movies list obtained successfully", movieInfo).send(
         res
       );
     } catch (e: any) {
       new ErrorResponse(e.message, HttpStatusCode.NOT_FOUND).send(res);
     }
   }
+  public static async getMovieById(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { id } = req.params;
+      const populate = {
+        path: "seasons",
+        populate: { path: "season_info", populate: { path: "chapters" } },
+      };
+      const movieInfoById = await MovieInfoModel.findById(id)
+        .populate(populate)
+        .populate("genres specifications");
+      new SuccessResponse("Movie obtained successfully", movieInfoById).send(
+        res
+      );
+    } catch (e: any) {
+      new ErrorResponse(e.message, HttpStatusCode.NOT_FOUND).send(res);
+    }
+  }
+
   //MOVIES PUT
   public static async updateMovieById(
     req: Request,
@@ -50,12 +79,36 @@ export default class Repo {
     try {
       const { id } = req.params;
       const update: IMovieInfo = req.body;
+      const populate = {
+        path: "seasons",
+        populate: { path: "season_info", populate: { path: "chapters" } },
+      };
       await MovieInfoModel.findByIdAndUpdate(id, update);
-      const movieUpdated = await MovieInfoModel.findById(id).populate(
-        "genres seasons score specifications",
-        "name season_name season_number season_chapters score_points"
-      );
+      const movieUpdated = await MovieInfoModel.findById(id)
+        .populate(populate)
+        .populate("genres specifications");
       new SuccessResponse("Movie updated successfully", movieUpdated).send(res);
+    } catch (e: any) {
+      new ErrorResponse(e.message, HttpStatusCode.NOT_FOUND).send(res);
+    }
+  }
+
+  //MOVIES DELETE
+  public static async deleteMovieById(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { id } = req.params;
+      const populate = {
+        path: "seasons",
+        populate: { path: "season_info", populate: { path: "chapters" } },
+      };
+      const movieDeleted = await MovieInfoModel.findByIdAndDelete(id)
+        .populate(populate)
+        .populate("genres specifications");
+      new SuccessResponse("Movie deleted successfully", movieDeleted).send(res);
     } catch (e: any) {
       new ErrorResponse(e.message, HttpStatusCode.NOT_FOUND).send(res);
     }

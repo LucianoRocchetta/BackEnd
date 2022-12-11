@@ -8,4 +8,7 @@ router.get("/specifications", Repo.getSpecifications);
 router.get("/specifications/:id", Repo.getSpecificationById);
 
 router.put("/specifications/:id", Repo.updateSpecificationById);
+
+router.delete("/specifications/:id", Repo.deleteSpecificationById);
+
 export default router;
